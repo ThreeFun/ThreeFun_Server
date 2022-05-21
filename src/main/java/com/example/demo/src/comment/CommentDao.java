@@ -31,4 +31,11 @@ public class CommentDao {
         String deleteCommentQuery = "UPDATE Comment SET state = 0 WHERE commentIdx = ? and userIdx = ?";
         return this.jdbcTemplate.update(deleteCommentQuery, commentIdx, userIdx);
     }
+
+    public int modifyComment(PostModifyComment postModifyComment){
+        String modifyCommentQuery = "update Comment set comment = ? where commentIdx = ? and userIdx = ?";
+        Object[] modifyCommentParams = new Object[]{postModifyComment.getComment(), postModifyComment.getCommentIdx(), postModifyComment.getUserIdx()};
+        return this.jdbcTemplate.update(modifyCommentQuery, modifyCommentParams);
+    }
+
 }

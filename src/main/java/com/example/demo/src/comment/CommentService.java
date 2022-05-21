@@ -51,4 +51,16 @@ public class CommentService {
             throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
         }
     }
+
+    public void modifyComment(PostModifyComment postModifyComment) throws BaseException {
+        try{
+            int result = commentDao.modifyComment(postModifyComment);
+            if (result == 0) {
+                throw new BaseException(BaseResponseStatus.MODIFY_FAIL_USERNAME); // 수정
+            }
+        }
+        catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
 }

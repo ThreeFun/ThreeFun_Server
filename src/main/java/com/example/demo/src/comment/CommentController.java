@@ -68,9 +68,34 @@ public class CommentController {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
             commentService.deleteComment(commentIdx, userIdx);
-            String result = "";
+            String result = "성공";
             return new BaseResponse<>(result);
         } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * 댓글 수정 API
+     * [POST] /comments/modify
+     * @return BaseResponse<String>
+     */
+    // Body
+    @ResponseBody
+    @PostMapping("/modify")
+    public BaseResponse<String> modifyComment(@RequestBody PostModifyComment postModifyComment) {
+        try{
+            int userIdx = postModifyComment.getUserIdx();
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            commentService.modifyComment(postModifyComment);
+            String result = "성공";
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
     }
