@@ -3,6 +3,7 @@ package com.example.demo.src.team;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.config.BaseResponseStatus;
+import com.example.demo.src.follow.model.GetFollowerTeamRes;
 import com.example.demo.src.team.model.GetTeamAll;
 import com.example.demo.src.team.model.PatchTeamReq;
 import com.example.demo.src.team.model.PostTeamReq;

@@ -4,6 +4,7 @@ import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.follow.model.GetFollowerRes;
+import com.example.demo.src.follow.model.GetFollowerTeamRes;
 import com.example.demo.src.follow.model.PostFollowReq;
 import com.example.demo.src.team.TeamProvider;
 import com.example.demo.src.team.TeamService;
@@ -100,15 +101,34 @@ public class FollowController {
     public BaseResponse<String> unfollows(@RequestBody PostFollowReq postFollowReq) {
         try{
             // jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             // userIdx와 접근한 유저가 같은지 확인
-            //if(postFollowReq.getFollowerIdx() != userIdxByJwt){
-                //return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-            //}
+            if(postFollowReq.getFollowerIdx() != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             followService.unfollow(postFollowReq);
             String result = "언팔로우 되었습니다.";
             return new BaseResponse<>(result);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    // 팔로우한 유저들의 게시글 조회
+    @ResponseBody
+    @GetMapping("/{userIdx}") // /follows/:userIdx
+    public BaseResponse<List<GetFollowerTeamRes>> getFollowTeamList(@PathVariable("userIdx") int userIdx) {
+        try{
+            // jwt에서 idx 추출.
+            //int userIdxByJwt = jwtService.getUserIdx();
+            // userIdx와 접근한 유저가 같은지 확인
+            //if(userIdx != userIdxByJwt){
+                //return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            //}
+
+            List<GetFollowerTeamRes> getFollowerTeamRes = followProvider.followTeamList(userIdx);
+            return new BaseResponse<>(getFollowerTeamRes);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }

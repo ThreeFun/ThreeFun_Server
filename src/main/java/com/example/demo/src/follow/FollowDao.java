@@ -1,6 +1,7 @@
 package com.example.demo.src.follow;
 
 import com.example.demo.src.follow.model.GetFollowerRes;
+import com.example.demo.src.follow.model.GetFollowerTeamRes;
 import com.example.demo.src.follow.model.PostFollowReq;
 import com.example.demo.src.team.model.GetCurrentList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,24 @@ public class FollowDao {
         Object[] insertUnfollowsParams = new Object[] {postFollowReq.getFollowerIdx(), postFollowReq.getFolloweeIdx()};
         return this.jdbcTemplate.update(checkUnfollowQuery,
                 insertUnfollowsParams);
+    }
+
+    // 팔로우한 유저들의 게시글 조회
+    public List<GetFollowerTeamRes> followTeamList(int userIdx){
+        String selectFollowerTeamQuery = "select title, price, region, mainImage, category \n" +
+                "from Member \n" +
+                "left outer join Team on Member.teamIdx = Team.teamIdx\n" +
+                "where Member.userIdx in (select followeeIdx as userIdx from Follow where followerIdx = ?);";
+
+        int selectFollowerTeamParam = userIdx;
+        return this.jdbcTemplate.query(selectFollowerTeamQuery,
+                (rs,rowNum) -> new GetFollowerTeamRes(
+                        rs.getString("title"),
+                        rs.getInt("price"),
+                        rs.getString("region"),
+                        rs.getString("mainImage"),
+                        rs.getString("category")
+                ), selectFollowerTeamParam);
     }
 }
 

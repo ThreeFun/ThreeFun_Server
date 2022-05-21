@@ -3,6 +3,8 @@ package com.example.demo.src.follow;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.follow.model.GetFollowerRes;
+import com.example.demo.src.follow.model.GetFollowerTeamRes;
+import com.example.demo.src.follow.model.PostFollowReq;
 import com.example.demo.src.team.TeamDao;
 import com.example.demo.src.team.model.GetTeamAll;
 import com.example.demo.utils.JwtService;
@@ -52,6 +54,17 @@ public class FollowProvider {
         }
     }
 
+    // 팔로우한 유저들의 게시글 조회
+    public List<GetFollowerTeamRes> followTeamList(int userIdx) throws BaseException{
+
+        //try{
+            List<GetFollowerTeamRes> getFollowerTeamRes = followDao.followTeamList(userIdx);
+            return getFollowerTeamRes;
+        //}
+        //catch (Exception exception) {
+            //throw new BaseException(DATABASE_ERROR);
+        //}
+    }
 
 
 }
