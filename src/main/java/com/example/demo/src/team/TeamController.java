@@ -3,6 +3,7 @@ package com.example.demo.src.team;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.config.BaseResponseStatus;
+import com.example.demo.src.team.model.GetTeamAll;
 import com.example.demo.src.team.model.PatchTeamReq;
 import com.example.demo.src.team.model.PostTeamReq;
 import com.example.demo.src.team.model.PostTeamRes;
@@ -11,6 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
 
 @RestController
 @RequestMapping("/teams")
@@ -126,5 +131,27 @@ public class TeamController {
     }
 
 
+    /**
+     * 모든 팀 게시글 조회 API
+     * [GET] /teams/:userIdx?regionName=
+     * @return BaseResponse<List<GetTeamAll>>
+     */
+    //Query String
+    @ResponseBody
+    @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/app/users
+    public BaseResponse<List<GetTeamAll>> getTeamAll(@PathVariable("userIdx") int userIdx, @RequestParam("regionName") String regionName) {
+        try{
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            List<GetTeamAll> getTeamAll = teamProvider.getTeamAll(userIdx, regionName);
+            return new BaseResponse<>(getTeamAll);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
 }

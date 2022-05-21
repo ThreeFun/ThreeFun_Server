@@ -2,12 +2,16 @@ package com.example.demo.src.team;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponseStatus;
-import com.example.demo.src.user.UserDao;
+import com.example.demo.src.team.model.GetTeamAll;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
 
 //Provider : Read의 비즈니스 로직 처리
 @Service
@@ -39,6 +43,16 @@ public class TeamProvider {
             return teamDao.checkTeamExist(teamIdx);
         } catch (Exception exception){
             throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
+
+    public List<GetTeamAll> getTeamAll(int userIdx, String regionName) throws BaseException{
+        try{
+            List<GetTeamAll> getTeamAll = teamDao.getTeamAll(userIdx, regionName);
+            return getTeamAll;
+        }
+        catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
         }
     }
 }
