@@ -32,13 +32,13 @@ public class TeamService {
     // 팀 생성
     public PostTeamRes createTeam(int userIdx, PostTeamReq postTeamReq) throws BaseException {
 
-        //try{
-            int teamIdx = teamDao.insertTeam(userIdx, postTeamReq, postTeamReq.getImage());
+        try{
+            int teamIdx = teamDao.insertTeam(userIdx, postTeamReq);
             return new PostTeamRes(teamIdx);
-        //}
-        //catch (Exception exception) {
-            //throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
-        //}
+        }
+        catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
     }
 
     // 팀 수정

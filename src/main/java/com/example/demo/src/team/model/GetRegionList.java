@@ -8,7 +8,7 @@ import org.springframework.lang.Nullable;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetCurrentList {
+public class GetRegionList {
     private int timeIdx;
     private String categoryName;
     private String title;
@@ -21,3 +21,4 @@ public class GetCurrentList {
     private int personnel;
     private String image;
 }
+
