@@ -10,7 +10,7 @@ public enum BaseResponseStatus {
     /**
      * 1000 : 요청 성공
      */
-    SUCCESS(true, 1000, "요청에 성공하였습니다."),
+    SUCCESS(true, 200, "요청에 성공하였습니다."),
 
 
     /**
@@ -27,8 +27,19 @@ public enum BaseResponseStatus {
 
     // [POST] /users
     POST_USERS_EMPTY_ID(false, 2015, "아이디를 입력해주세요."),
-    POST_USERS_INVALID_EMAIL(false, 2016, "이메일 형식을 확인해주세요."),
+    POST_USERS_INVALID_EMAIL(false, 2016, "아이디(이메일) 형식을 확인해주세요."),
     POST_USERS_EXISTS_ID(false,2017,"중복된 아이디입니다."),
+    POST_USERS_INVALID_USERNAME(false, 2018, "이름 형식을 확인해주세요."),
+    POST_USERS_EMPTY_USERNAME(false, 2019, "이름을 입력해주세요."),
+    POST_USERS_INVALID_PASSWORD(false, 2020, "비밀번호 형식을 확인해주세요."),
+    POST_USERS_EMPTY_PASSWORD(false, 2021, "비밀번호를 입력해주세요."),
+    POST_USERS_INVALID_REGION(false, 2022, "지역 인덱스를 확인해주세요."),
+    POST_USERS_EMPTY_REGION(false, 2023, "지역을 입력해주세요."),
+
+    //search
+    POST_USERS_EMPTY_IDX(false, 2024, "사용자 인덱스를 입력해주세요."),
+    POST_USERS_INVALID_IDX(false, 2025, "사용자 인덱스 형식을 확인해주세요."),
+
 
 
 
@@ -42,6 +53,7 @@ public enum BaseResponseStatus {
     DUPLICATED_EMAIL(false, 3013, "중복된 이메일입니다."),
     FAILED_TO_LOGIN(false,3014,"없는 아이디거나 비밀번호가 틀렸습니다."),
 
+    FAILED_TO_SEARCH(false, 3015, "없는 사용자 입니다."),
 
 
     /**

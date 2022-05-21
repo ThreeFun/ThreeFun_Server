@@ -95,6 +95,31 @@ public class UserController {
         if(!isRegexEmail(postUserReq.getId())){
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
         }
+
+        if(postUserReq.getUserName() == null){
+            return new BaseResponse<>(POST_USERS_EMPTY_USERNAME);
+        }
+
+        if(postUserReq.getUserName().length() > 16){
+            return new BaseResponse<>(POST_USERS_INVALID_USERNAME);
+        }
+
+        if(postUserReq.getPassword() == null){
+            return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
+        }
+
+        if(postUserReq.getPassword().length() > 20){
+            return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
+        }
+
+        if(postUserReq.getRegionIdx() == 0){
+            return new BaseResponse<>(POST_USERS_EMPTY_REGION);
+        }
+
+        if(postUserReq.getRegionIdx() < 1 || postUserReq.getRegionIdx() > 16){
+            return new BaseResponse<>(POST_USERS_INVALID_REGION);
+        }
+
         try{
             PostUserRes postUserRes = userService.createUser(postUserReq);
             return new BaseResponse<>(postUserRes);
@@ -111,8 +136,22 @@ public class UserController {
     @PostMapping("/logIn")
     public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq){
         try{
-            // TODO: 로그인 값들에 대한 형식적인 validatin 처리해주셔야합니다!
-            // TODO: 유저의 status ex) 비활성화된 유저, 탈퇴한 유저 등을 관리해주고 있다면 해당 부분에 대한 validation 처리도 해주셔야합니다.
+            if(postLoginReq.getId() == null){
+                return new BaseResponse<>(POST_USERS_EMPTY_ID);
+            }
+            //이메일 정규표현
+            if(!isRegexEmail(postLoginReq.getId())){
+                return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+            }
+
+            if(postLoginReq.getPassword() == null){
+                return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
+            }
+
+            if(postLoginReq.getPassword().length() > 20){
+                return new BaseResponse<>(POST_USERS_INVALID_PASSWORD);
+            }
+
             PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
             return new BaseResponse<>(postLoginRes);
         } catch (BaseException exception){
@@ -146,5 +185,45 @@ public class UserController {
         }
     }
 
+    /**
+     * 사용자 검색 API
+     * [POST] /users/search
+     * @return BaseResponse<PostSearchUserRes>
+     */
+    @ResponseBody
+    @PostMapping("/search")
+    public BaseResponse<List<PostSearchUserRes>> searchUser(@RequestBody PostSearchUserReq postSearchUserReq){
+        try{
+            int userIdx = postSearchUserReq.getUserIdx();
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+
+            if(postSearchUserReq.getUserIdx() == 0){
+                return new BaseResponse<>(POST_USERS_EMPTY_IDX);
+            }
+
+            Object obj = postSearchUserReq.getUserIdx();
+            if(obj instanceof String){
+                return new BaseResponse<>(POST_USERS_INVALID_IDX);
+            }
+
+            if(postSearchUserReq.getUserName() == null){
+                return new BaseResponse<>(POST_USERS_EMPTY_USERNAME);
+            }
+
+            if(postSearchUserReq.getUserName().length() > 16){
+                return new BaseResponse<>(POST_USERS_INVALID_USERNAME);
+            }
+
+            List<PostSearchUserRes> postSearchUserRes = userProvider.searchUser(postSearchUserReq);
+            return new BaseResponse<>(postSearchUserRes);
+        } catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 
 }
