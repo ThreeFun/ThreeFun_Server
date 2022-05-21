@@ -1,6 +1,7 @@
 package com.example.demo.src.follow;
 
 import com.example.demo.src.follow.model.GetFollowerRes;
+import com.example.demo.src.follow.model.PostFollowReq;
 import com.example.demo.src.team.model.GetCurrentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -37,6 +38,14 @@ public class FollowDao {
                 rs.getString("userProfile"),
                 rs.getString("userName")
         ), checkFolloweeExistParams);
+    }
+
+    // 팔로우
+    public int follows(PostFollowReq postFollowReq){
+        String checkFollowsQuery = "insert into Follow(followerIdx, followeeIdx) values (?, ?)";
+        Object[] insertFollowsParams = new Object[] {postFollowReq.getFollowerIdx(), postFollowReq.getFolloweeIdx()};
+        return this.jdbcTemplate.update(checkFollowsQuery,
+                insertFollowsParams);
     }
 }
 
