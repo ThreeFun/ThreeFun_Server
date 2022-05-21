@@ -48,7 +48,7 @@ public class TeamService {
             throw new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID);
         }
 
-        if (teamProvider.checkPostExist(teamIdx) == 0) {
+        if (teamProvider.checkTeamExist(teamIdx) == 0) {
             throw new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID); // POSTS_EMPTY로 바꾸기
         }
 
@@ -64,4 +64,24 @@ public class TeamService {
             throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
         }
     }
+
+    // 팀 삭제 - PATCH
+    public void deleteTeam(int teamIdx) throws BaseException {
+        if (teamProvider.checkTeamExist(teamIdx) == 0) {
+            throw new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID); // 수정하기
+        }
+
+        try{
+            int result = teamDao.deleteTeam(teamIdx);
+
+            // 성공이면 result = 1, 실패면 result = 0
+            if (result == 0) {
+                throw new BaseException(BaseResponseStatus.MODIFY_FAIL_USERNAME); // 수정
+            }
+        }
+        catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
+
 }

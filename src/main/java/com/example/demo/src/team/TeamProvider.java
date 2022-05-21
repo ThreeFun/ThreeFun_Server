@@ -34,7 +34,7 @@ public class TeamProvider {
     }
 
     // 존재하는 게시물인지 확인
-    public int checkPostExist(int teamIdx) throws BaseException{
+    public int checkTeamExist(int teamIdx) throws BaseException{
         try{
             return teamDao.checkTeamExist(teamIdx);
         } catch (Exception exception){

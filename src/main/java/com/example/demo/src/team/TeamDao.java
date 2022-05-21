@@ -53,6 +53,14 @@ public class TeamDao {
                 updateTeamParams);
     }
 
+    // 팀 삭제 - PATCH
+    public int deleteTeam(int teamIdx){
+        String deleteTeamQuery = "UPDATE Team SET state = 0 WHERE teamIdx = ?";
+        int deleteTeamParams = teamIdx;
+        return this.jdbcTemplate.update(deleteTeamQuery,
+                deleteTeamParams);
+    }
+
     // 존재하는 유저인지 확인
     public int checkUserExist(int userIdx){
         String checkUserExistQuery = "select exists(select userIdx from User where userIdx = ?)";

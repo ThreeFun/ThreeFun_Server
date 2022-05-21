@@ -112,5 +112,19 @@ public class TeamController {
         }
     }
 
+    // 팀 삭제 - PATCH
+    @ResponseBody
+    @PatchMapping ("/{teamIdx}/{userIdx}/status") // http://localhost:9000/teams/:teamIdx/:userIdx/status
+    public BaseResponse<String> deleteTeam(@PathVariable("teamIdx") int teamIdx, @PathVariable("userIdx") int userIdx) {
+        try{
+            teamService.deleteTeam(teamIdx);
+            String result = "팀 삭제를 완료하였습니다.";
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+
 
 }
