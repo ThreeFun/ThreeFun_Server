@@ -29,8 +29,5 @@ public class PostTeamReq {
     private int masterIdx;
     private int categoryIdx;
 
-    // 이미지
-    private List<String> images;
-    private int teamIdx;
-    private int mainImage;
+    private List<PostImage> image;
 }
