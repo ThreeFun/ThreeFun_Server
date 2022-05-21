@@ -47,5 +47,13 @@ public class FollowDao {
         return this.jdbcTemplate.update(checkFollowsQuery,
                 insertFollowsParams);
     }
+
+    // 언팔로우
+    public int unfollow(PostFollowReq postFollowReq){
+        String checkUnfollowQuery = "UPDATE Follow SET status = 0 WHERE followerIdx = ? and followeeIdx = ?";
+        Object[] insertUnfollowsParams = new Object[] {postFollowReq.getFollowerIdx(), postFollowReq.getFolloweeIdx()};
+        return this.jdbcTemplate.update(checkUnfollowQuery,
+                insertUnfollowsParams);
+    }
 }
 

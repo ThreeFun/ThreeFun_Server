@@ -1,6 +1,7 @@
 package com.example.demo.src.follow;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.follow.model.GetFollowerRes;
 import com.example.demo.src.team.TeamDao;
 import com.example.demo.src.team.model.GetTeamAll;
@@ -50,5 +51,7 @@ public class FollowProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+
 
 }
