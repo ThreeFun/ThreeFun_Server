@@ -3,11 +3,9 @@ package com.example.demo.src.team;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.config.BaseResponseStatus;
-import com.example.demo.src.team.model.PostTeamImageReq;
+import com.example.demo.src.team.model.PatchTeamReq;
 import com.example.demo.src.team.model.PostTeamReq;
 import com.example.demo.src.team.model.PostTeamRes;
-import com.example.demo.src.user.UserProvider;
-import com.example.demo.src.user.UserService;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +56,11 @@ public class TeamController {
             }
 
             // null값 에러 처리
+            if (postTeamReq.getSecret() == 1) {
+                if (postTeamReq.getTeamPassword() == null) {
+                    return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 비밀번호를 설정해주세요.
+                }
+            }
             if (postTeamReq.getContent() == null) {
                 return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 내용을 입력해주세요.
             }
@@ -73,18 +76,6 @@ public class TeamController {
             if (postTeamReq.getRegionIdx() <= 0) {
                 return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 지역을 선택해주세요.
             }
-            if (postTeamReq.getPrice() <= 0) {
-                return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 가격을 설정해주세요.
-            }
-            if (postTeamReq.getPersonnel() <= 0) {
-                return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 정원을 설정해주세요.
-            }
-            if (postTeamReq.getEntryFee() <= 0) {
-                return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 참가비를 설정해주세요.
-            }
-            if (postTeamReq.getSecret() <= 0) {
-                return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 비밀 여부를 선택해주세요.
-            }
             if (postTeamReq.getCategoryIdx() <= 0) {
                 return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 카테고리를 선택해주세요.
             }
@@ -96,4 +87,30 @@ public class TeamController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+    // 팀 수정
+    @ResponseBody
+    @PatchMapping ("/{teamIdx}/{userIdx}") // http://localhost:9000/teams/:teamIdx/:userIdx
+    public BaseResponse<String> modifyTeam(@PathVariable("teamIdx") int teamIdx, @PathVariable("userIdx") int userIdx, @RequestBody PatchTeamReq patchTeamReq) {
+        try {
+            if (patchTeamReq.getTitle().length() > 30) {
+                return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 제목은 30글자 이하만 가능합니다.
+            }
+
+            // null값 에러 처리
+            if (patchTeamReq.getSecret() == 1) {
+                if (patchTeamReq.getTeamPassword() == null) {
+                    return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 비밀번호를 설정해주세요.
+                }
+            }
+
+            teamService.modifyTeam(userIdx, teamIdx, patchTeamReq);
+            String result = "팀 수정을 완료하였습니다.";
+            return new BaseResponse<>(result);
+        } catch(BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+
 }
