@@ -72,11 +72,11 @@ public class TeamDao {
 
     // 존재하는 팀인지 확인
     public int checkTeamExist(int teamIdx){
-        String checkPostExistQuery = "select exists(select teamIdx from Team where postIdx = ?)";
-        int checkPostExistParams = teamIdx;
-        return this.jdbcTemplate.queryForObject(checkPostExistQuery,
+        String checkTeamExistQuery = "select exists(select teamIdx from Team where teamIdx = ?)";
+        int checkTeamExistParams = teamIdx;
+        return this.jdbcTemplate.queryForObject(checkTeamExistQuery,
                 int.class,
-                checkPostExistParams);
+                checkTeamExistParams);
     }
 
     @Transactional
