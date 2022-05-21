@@ -1,6 +1,6 @@
 package com.example.demo.src.team;
 
-import com.example.demo.src.team.model.PostTeamImageReq;
+import com.example.demo.src.team.model.PatchTeamReq;
 import com.example.demo.src.team.model.PostTeamReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -43,6 +43,32 @@ public class TeamDao {
             this.jdbcTemplate.update(createTeamImageQuery, createTeamImageParams);
         }
         return teamIdx;
+    }
+
+    // 팀 수정
+    public int updateTeam(int teamIdx, PatchTeamReq patchTeamReq){
+        String updateTeamQuery = "UPDATE Team SET title = ?, content = ? WHERE teamIdx = ?";
+        Object[] updateTeamParams = new Object[] {patchTeamReq.getTitle(), patchTeamReq.getContent(), teamIdx};
+        return this.jdbcTemplate.update(updateTeamQuery,
+                updateTeamParams);
+    }
+
+    // 존재하는 유저인지 확인
+    public int checkUserExist(int userIdx){
+        String checkUserExistQuery = "select exists(select userIdx from User where userIdx = ?)";
+        int checkUserExistParams = userIdx;
+        return this.jdbcTemplate.queryForObject(checkUserExistQuery,
+                int.class,
+                checkUserExistParams);
+    }
+
+    // 존재하는 팀인지 확인
+    public int checkTeamExist(int teamIdx){
+        String checkPostExistQuery = "select exists(select teamIdx from Team where postIdx = ?)";
+        int checkPostExistParams = teamIdx;
+        return this.jdbcTemplate.queryForObject(checkPostExistQuery,
+                int.class,
+                checkPostExistParams);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.example.demo.src.team;
 
+import com.example.demo.config.BaseException;
+import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.user.UserDao;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
@@ -20,5 +22,23 @@ public class TeamProvider {
     public TeamProvider(TeamDao teamDao, JwtService jwtService) {
         this.teamDao = teamDao;
         this.jwtService = jwtService;
+    }
+
+    // 존재하는 유저인지 확인
+    public int checkUserExist(int userIdx) throws BaseException {
+        try{
+            return teamDao.checkUserExist(userIdx);
+        } catch (Exception exception){
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
+
+    // 존재하는 게시물인지 확인
+    public int checkPostExist(int teamIdx) throws BaseException{
+        try{
+            return teamDao.checkTeamExist(teamIdx);
+        } catch (Exception exception){
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
     }
 }

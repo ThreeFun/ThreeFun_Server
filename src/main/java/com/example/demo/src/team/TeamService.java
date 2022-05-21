@@ -2,11 +2,9 @@ package com.example.demo.src.team;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponseStatus;
-import com.example.demo.src.team.model.PostTeamImageReq;
+import com.example.demo.src.team.model.PatchTeamReq;
 import com.example.demo.src.team.model.PostTeamReq;
 import com.example.demo.src.team.model.PostTeamRes;
-import com.example.demo.src.user.UserDao;
-import com.example.demo.src.user.UserProvider;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,15 +32,36 @@ public class TeamService {
     // 팀 생성
     public PostTeamRes createTeam(int userIdx, PostTeamReq postTeamReq) throws BaseException {
 
-        //try{
+        try{
             int teamIdx = teamDao.insertTeam(userIdx, postTeamReq);
-//            for (int i=0; i<postTeamImageReq.getImages().size(); i++) {
-//                teamDao.insertPostImgs(teamIdx, postTeamImageReq.getImages().get(i));
-//            }
             return new PostTeamRes(teamIdx);
-        //}
-        //catch (Exception exception) {
-            //throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
-        //}
+        }
+        catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
+
+    // 팀 수정
+    public void modifyTeam(int userIdx, int teamIdx, PatchTeamReq patchTeamReq) throws BaseException {
+
+        if (teamProvider.checkUserExist(userIdx) == 0) {
+            throw new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID);
+        }
+
+        if (teamProvider.checkPostExist(teamIdx) == 0) {
+            throw new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID); // POSTS_EMPTY로 바꾸기
+        }
+
+        try{
+            int result = teamDao.updateTeam(teamIdx, patchTeamReq);
+
+            // 성공이면 result = 1, 실패면 result = 0
+            if (result == 0) {
+                throw new BaseException(BaseResponseStatus.MODIFY_FAIL_USERNAME); // MODIFY_FAIL_TEAM으로 바꾸기
+            }
+        }
+        catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
     }
 }
