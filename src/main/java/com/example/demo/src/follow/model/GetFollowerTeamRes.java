@@ -9,4 +9,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GetFollowerTeamRes {
     private String title;
+    private int price;
+    private String region; // int regionIdx
+    private String mainImage;
+    private String category; // int categoryIdx
 }
