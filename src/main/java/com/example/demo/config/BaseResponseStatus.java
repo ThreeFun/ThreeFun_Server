@@ -33,8 +33,8 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_USERNAME(false, 2019, "이름을 입력해주세요."),
     POST_USERS_INVALID_PASSWORD(false, 2020, "비밀번호 형식을 확인해주세요."),
     POST_USERS_EMPTY_PASSWORD(false, 2021, "비밀번호를 입력해주세요."),
-    POST_USERS_INVALID_REGION(false, 2021, "지역 인덱스를 확인해주세요."),
-    POST_USERS_EMPTY_REGION(false, 2022, "지역을 입력해주세요."),
+    POST_USERS_INVALID_REGION(false, 2022, "지역 인덱스를 확인해주세요."),
+    POST_USERS_EMPTY_REGION(false, 2023, "지역을 입력해주세요."),
 
 
 
