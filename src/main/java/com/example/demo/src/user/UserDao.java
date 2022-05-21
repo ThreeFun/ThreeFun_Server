@@ -95,8 +95,28 @@ public class UserDao {
                 ),
                 getPwdParams
                 );
-
     }
 
+    public List<PostSearchUserRes> searchUser(PostSearchUserReq postSearchUserReq){
+        String getSearchUserQuery = "select userIdx, id, userName from User where userName = ? and state = 1;\n";
+        String getSearchUserParams = postSearchUserReq.getUserName();
+
+        return this.jdbcTemplate.query(getSearchUserQuery,
+                (rs,rowNum)-> new PostSearchUserRes(
+                        rs.getInt("userIdx"),
+                        rs.getString("id"),
+                        rs.getString("userName")
+                ),
+                getSearchUserParams
+        );
+    }
+
+    public int checkUserName(String userName){
+        String checkUserNameQuery = "select exists(select userName from User where userName = ?)";
+        String checkUserNameParams = userName;
+        return this.jdbcTemplate.queryForObject(checkUserNameQuery,
+                int.class,
+                checkUserNameParams);
+    }
 
 }

@@ -89,4 +89,18 @@ public class UserProvider {
 
     }
 
+    public List<PostSearchUserRes> searchUser(PostSearchUserReq postSearchUserReq) throws BaseException{
+        if(userDao.checkUserName(postSearchUserReq.getUserName()) == 0){
+            throw new BaseException(FAILED_TO_SEARCH);
+        }
+
+        try{
+            List<PostSearchUserRes> postSearchUserRes = userDao.searchUser(postSearchUserReq);
+            return postSearchUserRes;
+        }
+        catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
 }

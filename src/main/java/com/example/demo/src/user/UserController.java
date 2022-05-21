@@ -185,5 +185,45 @@ public class UserController {
         }
     }
 
+    /**
+     * 사용자 검색 API
+     * [POST] /users/search
+     * @return BaseResponse<PostSearchUserRes>
+     */
+    @ResponseBody
+    @PostMapping("/search")
+    public BaseResponse<List<PostSearchUserRes>> searchUser(@RequestBody PostSearchUserReq postSearchUserReq){
+        try{
+            int userIdx = postSearchUserReq.getUserIdx();
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+
+            if(postSearchUserReq.getUserIdx() == 0){
+                return new BaseResponse<>(POST_USERS_EMPTY_IDX);
+            }
+
+            Object obj = postSearchUserReq.getUserIdx();
+            if(obj instanceof String){
+                return new BaseResponse<>(POST_USERS_INVALID_IDX);
+            }
+
+            if(postSearchUserReq.getUserName() == null){
+                return new BaseResponse<>(POST_USERS_EMPTY_USERNAME);
+            }
+
+            if(postSearchUserReq.getUserName().length() > 16){
+                return new BaseResponse<>(POST_USERS_INVALID_USERNAME);
+            }
+
+            List<PostSearchUserRes> postSearchUserRes = userProvider.searchUser(postSearchUserReq);
+            return new BaseResponse<>(postSearchUserRes);
+        } catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 
 }
