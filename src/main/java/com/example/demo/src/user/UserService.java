@@ -34,8 +34,8 @@ public class UserService {
     //POST
     public PostUserRes createUser(PostUserReq postUserReq) throws BaseException {
         //중복
-        if(userProvider.checkEmail(postUserReq.getEmail()) ==1){
-            throw new BaseException(POST_USERS_EXISTS_EMAIL);
+        if(userProvider.checkId(postUserReq.getId()) ==1){
+            throw new BaseException(POST_USERS_EXISTS_ID);
         }
 
         String pwd;

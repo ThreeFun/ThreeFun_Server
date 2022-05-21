@@ -61,9 +61,9 @@ public class UserProvider {
         }
     }
 
-    public int checkEmail(String email) throws BaseException{
+    public int checkId(String id) throws BaseException{
         try{
-            return userDao.checkEmail(email);
+            return userDao.checkId(id);
         } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
