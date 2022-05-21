@@ -7,6 +7,7 @@ import com.example.demo.src.team.model.GetTeamAll;
 import com.example.demo.src.team.model.PatchTeamReq;
 import com.example.demo.src.team.model.PostTeamReq;
 import com.example.demo.src.team.model.PostTeamRes;
+import com.example.demo.src.user.model.GetUserRes;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ public class TeamController {
                 return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 제목은 30글자 이하만 가능합니다.
             }
 
-            if (postTeamReq.getImages().size() > 450) {
+            if (postTeamReq.getImage().size() > 450) {
                 return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 이미지 등록 가능 개수가 초과되었습니다.
             }
 
@@ -129,6 +130,24 @@ public class TeamController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+    /**
+     * 팀 1개 조회 API
+     * [GET] /teams/:teamIdx/:userIdx
+     * @return BaseResponse<GetUserRes>
+     */
+    // Path-variable
+//    @ResponseBody
+//    @GetMapping("/{teamIdx}/{userIdx}")
+//    public BaseResponse<GetUserRes> getTeam(@PathVariable("teamIdx") int teamIdx, @PathVariable("userIdx") int userIdx) {
+//        try{
+//            GetUserRes getUserRes = userProvider.getUser(userIdx);
+//            return new BaseResponse<>(getUserRes);
+//        } catch(BaseException exception){
+//            return new BaseResponse<>((exception.getStatus()));
+//        }
+//
+//    }
 
 
     /**
