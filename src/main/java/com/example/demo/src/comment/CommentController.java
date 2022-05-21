@@ -51,4 +51,27 @@ public class CommentController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+    /**
+     * 댓글 삭제 API
+     * [PATCH] /comments/:commentIdx/:userIdx/status
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/{commentIdx}/{userIdx}")
+    public BaseResponse<String> deleteComment(@PathVariable("commentIdx") int commentIdx, @PathVariable("userIdx") int userIdx){
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            commentService.deleteComment(commentIdx, userIdx);
+            String result = "";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 }

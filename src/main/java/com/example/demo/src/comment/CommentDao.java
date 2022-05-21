@@ -26,4 +26,9 @@ public class CommentDao {
         String lastInserIdQuery = "select last_insert_id()";
         return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
     }
+
+    public int deleteComment(int commentIdx, int userIdx ){
+        String deleteCommentQuery = "UPDATE Comment SET state = 0 WHERE commentIdx = ? and userIdx = ?";
+        return this.jdbcTemplate.update(deleteCommentQuery, commentIdx, userIdx);
+    }
 }
