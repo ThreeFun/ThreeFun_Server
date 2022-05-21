@@ -36,6 +36,11 @@ public enum BaseResponseStatus {
     POST_USERS_INVALID_REGION(false, 2022, "지역 인덱스를 확인해주세요."),
     POST_USERS_EMPTY_REGION(false, 2023, "지역을 입력해주세요."),
 
+    //search
+    POST_USERS_EMPTY_IDX(false, 2024, "사용자 인덱스를 입력해주세요."),
+    POST_USERS_INVALID_IDX(false, 2025, "사용자 인덱스 형식을 확인해주세요."),
+
+
 
 
     /**
@@ -48,6 +53,7 @@ public enum BaseResponseStatus {
     DUPLICATED_EMAIL(false, 3013, "중복된 이메일입니다."),
     FAILED_TO_LOGIN(false,3014,"없는 아이디거나 비밀번호가 틀렸습니다."),
 
+    FAILED_TO_SEARCH(false, 3015, "없는 사용자 입니다."),
 
 
     /**
