@@ -46,4 +46,20 @@ public class FollowService {
             throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
         }
     }
+
+    // 언팔로우
+    public void unfollow(PostFollowReq postFollowReq) throws BaseException {
+
+        try{
+            int result = followDao.unfollow(postFollowReq);
+
+            // 성공이면 result = 1, 실패면 result = 0
+            if (result == 0) {
+                throw new BaseException(BaseResponseStatus.MODIFY_FAIL_USERNAME); // 수정
+            }
+        }
+        catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
 }

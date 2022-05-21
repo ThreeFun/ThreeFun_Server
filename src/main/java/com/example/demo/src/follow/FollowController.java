@@ -80,14 +80,34 @@ public class FollowController {
     public BaseResponse<String> follows(@RequestBody PostFollowReq postFollowReq) {
         try{
             // jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            // userIdx와 접근한 유저가 같은지 확인
+            if(postFollowReq.getFollowerIdx() != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
+
+            followService.follows(postFollowReq);
+            String result = "팔로우 되었습니다.";
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    // 언팔로우
+    @ResponseBody
+    @PostMapping("/unfollow") // /follows/unfollow
+    public BaseResponse<String> unfollows(@RequestBody PostFollowReq postFollowReq) {
+        try{
+            // jwt에서 idx 추출.
             //int userIdxByJwt = jwtService.getUserIdx();
             // userIdx와 접근한 유저가 같은지 확인
             //if(postFollowReq.getFollowerIdx() != userIdxByJwt){
                 //return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
             //}
 
-            followService.follows(postFollowReq);
-            String result = "팔로우 되었습니다.";
+            followService.unfollow(postFollowReq);
+            String result = "언팔로우 되었습니다.";
             return new BaseResponse<>(result);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
