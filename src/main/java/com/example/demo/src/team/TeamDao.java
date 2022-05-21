@@ -20,7 +20,7 @@ public class TeamDao {
 
     // 팀 생성 + 팀 이미지 삽입
     @Transactional
-    public int insertTeam(int userIdx, PostTeamReq postTeamReq, List<PostImage> postImage){
+    public int insertTeam(int userIdx, PostTeamReq postTeamReq){
 
         String insertTeamQuery = "INSERT INTO Team(content, title, meetingTime, meetingDate, regionIdx, price, personnel, entryFee, allAgree, payment, teamPassword, secret, masterIdx, categoryIdx) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         Object[] insertTeamParams = new Object[] {postTeamReq.getContent(), postTeamReq.getTitle(), postTeamReq.getMeetingTime(), postTeamReq.getMeetingDate(), postTeamReq.getRegionIdx(), postTeamReq.getPrice(), postTeamReq.getPersonnel(), postTeamReq.getEntryFee(), postTeamReq.getAllAgree(), postTeamReq.getPayment(), postTeamReq.getTeamPassword(), postTeamReq.getSecret(), postTeamReq.getMasterIdx(), postTeamReq.getCategoryIdx()};
@@ -36,10 +36,14 @@ public class TeamDao {
             return teamIdx;
         }
 
-        for (int i = 0; i < postTeamReq.getImage().size(); i++ ){
+        String createMainImageQuery = "insert into TeamImage(image, mainImage, teamIdx) values (?, ?, ?)";
+        Object[] createMainImageParams = new Object[]{postTeamReq.getImage().get(0), postTeamReq.getMainImage(), teamIdx};
+        this.jdbcTemplate.update(createMainImageQuery, createMainImageParams);
+
+        for (int i = 1; i < postTeamReq.getImage().size(); i++ ){
             // TeamImage table에 이미지 삽입
-            String createTeamImageQuery = "insert into TeamImage(image, mainImage, teamIdx) values (?, ?, ?)";
-            Object[] createTeamImageParams = new Object[]{postTeamReq.getImage().get(i), postTeamReq.getImage().get(i).getMainImage(), teamIdx};
+            String createTeamImageQuery = "insert into TeamImage(image, teamIdx) values (?, ?)";
+            Object[] createTeamImageParams = new Object[]{postTeamReq.getImage().get(i), teamIdx};
             this.jdbcTemplate.update(createTeamImageQuery, createTeamImageParams);
         }
         return teamIdx;
@@ -80,17 +84,20 @@ public class TeamDao {
     }
 
     @Transactional
-    public List<GetTeamAll> getTeamAll(int userIdx, String regionName){
-        String getTeamAllQuery = "select t.teamIdx timeIdx,\n" +
+    public List<GetTeamAll> getTeamAll(int userIdx){
+        String getTestQuery = "select userIdx from User where userIdx = ?";
+        String getRegionListQuery = "select t.teamIdx timeIdx,\n" +
                 "       gc.categoryName categoryName,\n" +
                 "       t.title title,\n" +
-                "       concat('총 상금 ', (format(t.price * t.personnel, 0)), '원') totalPrice,\n" +
-                "       concat((format(t.price, 0)), '원') price,\n" +
+                "       (t.price * t.personnel) totalPrice,\n" +
+                "       t.price price,\n" +
                 "       r.regionName regionName,\n" +
-                "       concat(date_format(meetingDate, '%m'), '월', date_format(meetingDate, '%d'), '일 ', date_format(meetingTime, '%H:%m')) as date,\n" +
-                "       ifnull(concat(numberOfPeople, '/', t.personnel, '명'), concat('0/', t.personnel, '명')) as nowPeople,\n" +
+                "       meetingTime,\n" +
+                "       meetingDate,\n" +
+                "       ifnull(numberOfPeople, 0) numberOfPeople,\n" +
+                "       personnel,\n" +
                 "       ti.image image\n" +
-                "from GameCategory gc, TeamImage ti, Region r, Team t\n" +
+                "from GameCategory gc, User u, TeamImage ti, Region r, Team t\n" +
                 "left join(\n" +
                 "    select m.teamIdx, count(m.userIdx) as numberOfPeople\n" +
                 "    from Member m\n" +
@@ -100,11 +107,12 @@ public class TeamDao {
                 "and t.teamIdx = ti.teamIdx\n" +
                 "and ti.mainImage = 1\n" +
                 "and r.regionIdx = t.regionIdx\n" +
+                "and u.regionIdx = r.regionIdx\n" +
                 "and r.state = 1\n" +
                 "and t.state = 1\n" +
                 "and gc.state = 1\n" +
                 "and t.secret = 0\n" +
-                "and r.regionName = ?;";
+                "and u.userIdx = ?;";
         String getFollowListQuery = "select t.teamIdx teamIdx,\n" +
                 "       u.userName userName,\n" +
                 "       u.userProfile userProfile,\n" +
@@ -124,11 +132,13 @@ public class TeamDao {
         String getCurrentListQuery = "select t.teamIdx timeIdx,\n" +
                 "       gc.categoryName categoryName,\n" +
                 "       t.title title,\n" +
-                "       concat('총 상금 ', (format(t.price * t.personnel, 0)), '원') totalPrice,\n" +
-                "       concat((format(t.price, 0)), '원') price,\n" +
+                "       (t.price * t.personnel) totalPrice,\n" +
+                "       t.price price,\n" +
                 "       r.regionName regionName,\n" +
-                "       concat(date_format(meetingDate, '%m'), '월', date_format(meetingDate, '%d'), '일 ', date_format(meetingTime, '%H:%m')) as date,\n" +
-                "       ifnull(concat(numberOfPeople, '/', t.personnel, '명'), concat('0/', t.personnel, '명')) as nowPeople,\n" +
+                "       meetingTime,\n" +
+                "       meetingDate,\n" +
+                "       ifnull(numberOfPeople, 0) numberOfPeople,\n" +
+                "       personnel,\n" +
                 "       ti.image image\n" +
                 "from GameCategory gc, TeamImage ti, Region r, Team t\n" +
                 "left join(\n" +
@@ -143,43 +153,46 @@ public class TeamDao {
                 "and r.state = 1\n" +
                 "and t.state = 1\n" +
                 "and gc.state = 1\n" +
-                "and t.secret = 0\n" +
                 "order by t.createAt desc";
 
         int getUserParams = userIdx;
-        String getTeamRegionParams = regionName;
 
-        return this.jdbcTemplate.query(getTeamAllQuery,
+        return this.jdbcTemplate.query(getTestQuery,
                 (rs, rowNum) -> new GetTeamAll(
-                        rs.getInt("timeIdx"),
-                        rs.getString("categoryName"),
-                        rs.getString("title"),
-                        rs.getString("totalPrice"),
-                        rs.getString("price"),
-                        rs.getString("regionName"),
-                        rs.getString("date"),
-                        rs.getString("nowPeople"),
-                        rs.getString("image"),
-                        this.jdbcTemplate.query(getFollowListQuery, (rs1, rowNum1) -> new GetFollowList(
-                                rs1.getInt("teamIdx"),
-                                rs1.getString("userName"),
-                                rs1.getString("userProfile"),
-                                rs1.getString("regionName"),
+                        this.jdbcTemplate.query(getRegionListQuery, (rs1, rowNum1) -> new GetRegionList(
+                                rs1.getInt("timeIdx"),
                                 rs1.getString("categoryName"),
+                                rs1.getString("title"),
+                                rs1.getInt("totalPrice"),
+                                rs1.getInt("price"),
+                                rs1.getString("regionName"),
+                                rs1.getString("meetingTime"),
+                                rs1.getString("meetingDate"),
+                                rs1.getInt("numberOfPeople"),
+                                rs1.getInt("personnel"),
                                 rs1.getString("image")
-                        ), getUserParams),
-                        this.jdbcTemplate.query(getCurrentListQuery, (rs2, rowNum2) -> new GetCurrentList(
-                                rs2.getInt("timeIdx"),
-                                rs2.getString("categoryName"),
-                                rs2.getString("title"),
-                                rs2.getString("totalPrice"),
-                                rs2.getString("price"),
+                        ),  getUserParams),
+                        this.jdbcTemplate.query(getFollowListQuery, (rs2, rowNum2) -> new GetFollowList(
+                                rs2.getInt("teamIdx"),
+                                rs2.getString("userName"),
+                                rs2.getString("userProfile"),
                                 rs2.getString("regionName"),
-                                rs2.getString("date"),
-                                rs2.getString("nowPeople"),
+                                rs2.getString("categoryName"),
                                 rs2.getString("image")
+                        ), getUserParams),
+                        this.jdbcTemplate.query(getCurrentListQuery, (rs3, rowNum3) -> new GetCurrentList(
+                                rs3.getInt("timeIdx"),
+                                rs3.getString("categoryName"),
+                                rs3.getString("title"),
+                                rs3.getInt("totalPrice"),
+                                rs3.getInt("price"),
+                                rs3.getString("regionName"),
+                                rs3.getString("meetingTime"),
+                                rs3.getString("meetingDate"),
+                                rs3.getInt("numberOfPeople"),
+                                rs3.getInt("personnel"),
+                                rs3.getString("image")
                         ))
-                ), getTeamRegionParams);
+                ), getUserParams);
     }
-
 }

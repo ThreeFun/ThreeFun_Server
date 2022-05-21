@@ -46,13 +46,13 @@ public class TeamProvider {
         }
     }
 
-    public List<GetTeamAll> getTeamAll(int userIdx, String regionName) throws BaseException{
-        try{
-            List<GetTeamAll> getTeamAll = teamDao.getTeamAll(userIdx, regionName);
+    public List<GetTeamAll> getTeamAll(int userIdx) throws BaseException{
+  //      try{
+            List<GetTeamAll> getTeamAll = teamDao.getTeamAll(userIdx);
             return getTeamAll;
-        }
-        catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
-        }
+   ////     }
+    //    catch (Exception exception) {
+    //        throw new BaseException(DATABASE_ERROR);
+  //      }
     }
 }

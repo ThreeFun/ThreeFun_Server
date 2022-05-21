@@ -3,11 +3,7 @@ package com.example.demo.src.team;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.config.BaseResponseStatus;
-import com.example.demo.src.team.model.GetTeamAll;
-import com.example.demo.src.team.model.PatchTeamReq;
-import com.example.demo.src.team.model.PostTeamReq;
-import com.example.demo.src.team.model.PostTeamRes;
-import com.example.demo.src.user.model.GetUserRes;
+import com.example.demo.src.team.model.*;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +38,11 @@ public class TeamController {
     @PostMapping("") // http://localhost:9000/teams
     public BaseResponse<PostTeamRes> createPosts(@RequestBody PostTeamReq postTeamReq) {
         try{
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            if (postTeamReq.getMasterIdx() != userIdxByJwt) {
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            int userIdx = postTeamReq.getMasterIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
+            if (postTeamReq.getMasterIdx() != userIdxByJwt) {
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+          }
 
             if (postTeamReq.getTeamPassword() != null) {
                 if (postTeamReq.getTeamPassword().length() > 3) {
@@ -57,9 +54,9 @@ public class TeamController {
                 return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 제목은 30글자 이하만 가능합니다.
             }
 
-            if (postTeamReq.getImage().size() > 450) {
-                return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 이미지 등록 가능 개수가 초과되었습니다.
-            }
+//            if (postTeamReq.getImage().size() > 450) {
+//                return new BaseResponse<>(BaseResponseStatus.REQUEST_ERROR); // 이미지 등록 가능 개수가 초과되었습니다.
+//            }
 
             // null값 에러 처리
             if (postTeamReq.getSecret() == 1) {
@@ -158,7 +155,7 @@ public class TeamController {
     //Query String
     @ResponseBody
     @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/app/users
-    public BaseResponse<List<GetTeamAll>> getTeamAll(@PathVariable("userIdx") int userIdx, @RequestParam("regionName") String regionName) {
+    public BaseResponse<List<GetTeamAll>> getTeamAll(@PathVariable("userIdx") int userIdx) {
         try{
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
@@ -166,7 +163,7 @@ public class TeamController {
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            List<GetTeamAll> getTeamAll = teamProvider.getTeamAll(userIdx, regionName);
+            List<GetTeamAll> getTeamAll = teamProvider.getTeamAll(userIdx);
             return new BaseResponse<>(getTeamAll);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
